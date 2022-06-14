@@ -10,6 +10,8 @@ jobs:
       - run:
           name: Building
           command: pip install flask
+      - run:
+          command: echo $AWS_SECRET_ACCESS_KEY
 
 workflows:
   sample:

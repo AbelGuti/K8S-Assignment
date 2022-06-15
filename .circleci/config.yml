@@ -14,14 +14,6 @@ jobs:
       - run:
           name: Building
           command: docker build .
-      - aws-ecr/build-and-push-image:
-          create-repo: true
-          repo: circle
-          push-image: true
-          aws-access-key-id: $AWS_ACCESS_KEY_ID
-          aws-secret-access-key: $AWS_SECRET_ACCESS_KEY
-          region: us-west-2
-          aws-cli-version: latest
   build-and-test:
     docker:
       - image: cimg/python:3.10.2
@@ -36,9 +28,11 @@ jobs:
 workflows:
   sample:
     jobs:
-      - build
-      - build-and-test:
-          filters:
-            branches:
-              only:
-                - develop
+      - aws-ecr/build-and-push-image:
+          create-repo: true
+          repo: circle
+          push-image: true
+          aws-access-key-id: $AWS_ACCESS_KEY_ID
+          aws-secret-access-key: $AWS_SECRET_ACCESS_KEY
+          region: us-west-2
+          aws-cli-version: latest

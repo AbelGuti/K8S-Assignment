@@ -6,7 +6,7 @@ jobs:
   build:
     working_directory: /app
     docker:
-      - image: docker
+      - image: ubuntu
     steps:
       - checkout
       - setup_remote_docker:

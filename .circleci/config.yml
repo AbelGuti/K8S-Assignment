@@ -28,7 +28,29 @@ jobs:
           name: Docker Push
           command: |
             docker push 450183644535.dkr.ecr.us-west-2.amazonaws.com/color:latest
+  test:
+    docker:
+      - image: ubuntu
+    steps:
+      - run:
+          name: Performing testing
+          command: echo "Running a dummy test"
+  deployment:
+    docker:
+      - image: ubuntu
+    steps:
+      - run:
+          name: Installing dependencies
+          command: |
+            apt update
+            apt install -y zip curl
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+            kubectl version --client
 workflows:
   nclouds:
     jobs:
       - build
+      - test
+      - deployment

@@ -62,11 +62,6 @@ workflows:
       - test:
           requires:
             - build
-      - hold:
-          type: approval
-          requires:
-            - build
-            - test
       - deployment:
           requires:
-            - hold
+            - test

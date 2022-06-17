@@ -1,22 +1,33 @@
 version: 2.1
 
 jobs:
-  build-and-test:
+  build:
     docker:
-      - image: cimg/python:3.10.2
+      - image: ubuntu
     steps:
       - checkout
       - run:
-          name: Building
-          command: pip install flask
+          name: Installing dependencies
+          command: |
+            apt update
+            apt install -y zip docker.io curl
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            ./aws/install
       - run:
-          command: echo $AWS_SECRET_ACCESS_KEY
-
+          name: ECR Auth
+          command: |
+            aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 450183644535.dkr.ecr.us-west-2.amazonaws.com
+      - run:
+          name: Docker Build
+          command: |
+            docker build -t color .
+            docker tag color 450183644535.dkr.ecr.us-west-2.amazonaws.com/color:latest
+      - run:
+          name: Docker Push
+          command: |
+            docker push 450183644535.dkr.ecr.us-west-2.amazonaws.com/color:latest
 workflows:
-  sample:
+  nclouds:
     jobs:
-      - build-and-test:
-          filters:
-            branches:
-              only:
-                - develop
+      - build
